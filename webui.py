@@ -64,10 +64,10 @@ LANGUAGES = {
     "中文": "zh_CN",
     "English": "en_US"
 }
-EMO_CHOICES_ALL = [i18n("与音色参考音频相同"),
-                i18n("使用情感参考音频"),
+EMO_CHOICES_ALL = [i18n("與音色參考音訊相同"),
+                i18n("使用情感參考音訊"),
                 i18n("使用情感向量控制"),
-                i18n("使用情感描述文本控制")]
+                i18n("使用情感描述文字控制")]
 EMO_CHOICES_OFFICIAL = EMO_CHOICES_ALL[:-1]  # skip experimental features
 
 os.makedirs("outputs/tasks",exist_ok=True)
@@ -170,7 +170,7 @@ def create_warning_message(warning_text):
     return gr.HTML(f"<div style=\"padding: 0.5em 0.8em; border-radius: 0.5em; background: #ffa87d; color: #000; font-weight: bold\">{html.escape(warning_text)}</div>")
 
 def create_experimental_warning_message():
-    return create_warning_message(i18n('提示：此功能为实验版，结果尚不稳定，我们正在持续优化中。'))
+    return create_warning_message(i18n('提示：此功能為實驗版，結果尚不穩定，我們正在持續優化中。'))
 
 with gr.Blocks(title="IndexTTS Demo") as demo:
     mutex = threading.Lock()
@@ -181,23 +181,23 @@ with gr.Blocks(title="IndexTTS Demo") as demo:
 </p>
     ''')
 
-    with gr.Tab(i18n("音频生成")):
+    with gr.Tab(i18n("音訊生成")):
         with gr.Row():
             os.makedirs("prompts",exist_ok=True)
-            prompt_audio = gr.Audio(label=i18n("音色参考音频"),key="prompt_audio",
+            prompt_audio = gr.Audio(label=i18n("音色參考音訊"),key="prompt_audio",
                                     sources=["upload","microphone"],type="filepath")
             prompt_list = os.listdir("prompts")
             default = ''
             if prompt_list:
                 default = prompt_list[0]
             with gr.Column():
-                input_text_single = gr.TextArea(label=i18n("文本"),key="input_text_single", placeholder=i18n("请输入目标文本"), info=f"{i18n('当前模型版本')}{tts.model_version or '1.0'}")
-                gen_button = gr.Button(i18n("生成语音"), key="gen_button",interactive=True)
-            output_audio = gr.Audio(label=i18n("生成结果"), visible=True,key="output_audio")
+                input_text_single = gr.TextArea(label=i18n("文字"),key="input_text_single", placeholder=i18n("請輸入目標文字"), info=f"{i18n('當前模型版本')}{tts.model_version or '1.0'}")
+                gen_button = gr.Button(i18n("生成語音"), key="gen_button",interactive=True)
+            output_audio = gr.Audio(label=i18n("生成結果"), visible=True,key="output_audio")
 
-        experimental_checkbox = gr.Checkbox(label=i18n("显示实验功能"), value=False)
+        experimental_checkbox = gr.Checkbox(label=i18n("顯示實驗功能"), value=False)
 
-        with gr.Accordion(i18n("功能设置")):
+        with gr.Accordion(i18n("功能設定")):
             # 情感控制选项部分
             with gr.Row():
                 emo_control_method = gr.Radio(
@@ -212,14 +212,14 @@ with gr.Blocks(title="IndexTTS Demo") as demo:
                     type="index",
                     value=EMO_CHOICES_ALL[0], label=i18n("情感控制方式"),
                     visible=False)  # do not render
-        # 情感参考音频部分
+        # 情感參考音訊部分
         with gr.Group(visible=False) as emotion_reference_group:
             with gr.Row():
-                emo_upload = gr.Audio(label=i18n("上传情感参考音频"), type="filepath")
+                emo_upload = gr.Audio(label=i18n("上傳情感參考音訊"), type="filepath")
 
-        # 情感随机采样
+        # 情感隨機採樣
         with gr.Row(visible=False) as emotion_randomize_group:
-            emo_random = gr.Checkbox(label=i18n("情感随机采样"), value=False)
+            emo_random = gr.Checkbox(label=i18n("情感隨機採樣"), value=False)
 
         # 情感向量控制部分
         with gr.Group(visible=False) as emotion_vector_group:
@@ -228,30 +228,30 @@ with gr.Blocks(title="IndexTTS Demo") as demo:
                     vec1 = gr.Slider(label=i18n("喜"), minimum=0.0, maximum=1.0, value=0.0, step=0.05)
                     vec2 = gr.Slider(label=i18n("怒"), minimum=0.0, maximum=1.0, value=0.0, step=0.05)
                     vec3 = gr.Slider(label=i18n("哀"), minimum=0.0, maximum=1.0, value=0.0, step=0.05)
-                    vec4 = gr.Slider(label=i18n("惧"), minimum=0.0, maximum=1.0, value=0.0, step=0.05)
+                    vec4 = gr.Slider(label=i18n("懼"), minimum=0.0, maximum=1.0, value=0.0, step=0.05)
                 with gr.Column():
-                    vec5 = gr.Slider(label=i18n("厌恶"), minimum=0.0, maximum=1.0, value=0.0, step=0.05)
+                    vec5 = gr.Slider(label=i18n("厭惡"), minimum=0.0, maximum=1.0, value=0.0, step=0.05)
                     vec6 = gr.Slider(label=i18n("低落"), minimum=0.0, maximum=1.0, value=0.0, step=0.05)
-                    vec7 = gr.Slider(label=i18n("惊喜"), minimum=0.0, maximum=1.0, value=0.0, step=0.05)
-                    vec8 = gr.Slider(label=i18n("平静"), minimum=0.0, maximum=1.0, value=0.0, step=0.05)
+                    vec7 = gr.Slider(label=i18n("驚喜"), minimum=0.0, maximum=1.0, value=0.0, step=0.05)
+                    vec8 = gr.Slider(label=i18n("平靜"), minimum=0.0, maximum=1.0, value=0.0, step=0.05)
 
         with gr.Group(visible=False) as emo_text_group:
             create_experimental_warning_message()
             with gr.Row():
-                emo_text = gr.Textbox(label=i18n("情感描述文本"),
-                                      placeholder=i18n("请输入情绪描述（或留空以自动使用目标文本作为情绪描述）"),
+                emo_text = gr.Textbox(label=i18n("情感描述文字"),
+                                      placeholder=i18n("請輸入情緒描述（或留空以自動使用目標文字作為情緒描述）"),
                                       value="",
-                                      info=i18n("例如：委屈巴巴、危险在悄悄逼近"))
+                                      info=i18n("例如：委屈巴巴、危險在悄悄逼近"))
 
         with gr.Row(visible=False) as emo_weight_group:
-            emo_weight = gr.Slider(label=i18n("情感权重"), minimum=0.0, maximum=1.0, value=0.65, step=0.01)
+            emo_weight = gr.Slider(label=i18n("情感權重"), minimum=0.0, maximum=1.0, value=0.65, step=0.01)
 
-        with gr.Accordion(i18n("高级生成参数设置"), open=False, visible=True) as advanced_settings_group:
+        with gr.Accordion(i18n("高級生成參數設定"), open=False, visible=True) as advanced_settings_group:
             with gr.Row():
                 with gr.Column(scale=1):
-                    gr.Markdown(f"**{i18n('GPT2 采样设置')}** _{i18n('参数会影响音频多样性和生成速度详见')} [Generation strategies](https://huggingface.co/docs/transformers/main/en/generation_strategies)._")
+                    gr.Markdown(f"**{i18n('GPT2 採樣設定')}** _{i18n('參數會影響音訊多樣性和生成速度詳見')} [Generation strategies](https://huggingface.co/docs/transformers/main/en/generation_strategies)._")
                     with gr.Row():
-                        do_sample = gr.Checkbox(label="do_sample", value=True, info=i18n("是否进行采样"))
+                        do_sample = gr.Checkbox(label="do_sample", value=True, info=i18n("是否進行採樣"))
                         temperature = gr.Slider(label="temperature", minimum=0.1, maximum=2.0, value=0.8, step=0.1)
                     with gr.Row():
                         top_p = gr.Slider(label="top_p", minimum=0.0, maximum=1.0, value=0.8, step=0.01)
@@ -260,21 +260,21 @@ with gr.Blocks(title="IndexTTS Demo") as demo:
                     with gr.Row():
                         repetition_penalty = gr.Number(label="repetition_penalty", precision=None, value=10.0, minimum=0.1, maximum=20.0, step=0.1)
                         length_penalty = gr.Number(label="length_penalty", precision=None, value=0.0, minimum=-2.0, maximum=2.0, step=0.1)
-                    max_mel_tokens = gr.Slider(label="max_mel_tokens", value=1500, minimum=50, maximum=tts.cfg.gpt.max_mel_tokens, step=10, info=i18n("生成Token最大数量，过小导致音频被截断"), key="max_mel_tokens")
+                    max_mel_tokens = gr.Slider(label="max_mel_tokens", value=1500, minimum=50, maximum=tts.cfg.gpt.max_mel_tokens, step=10, info=i18n("生成Token最大數量，過小導致音訊被截斷"), key="max_mel_tokens")
                     # with gr.Row():
-                    #     typical_sampling = gr.Checkbox(label="typical_sampling", value=False, info="不建议使用")
+                    #     typical_sampling = gr.Checkbox(label="typical_sampling", value=False, info="不建議使用")
                     #     typical_mass = gr.Slider(label="typical_mass", value=0.9, minimum=0.0, maximum=1.0, step=0.1)
                 with gr.Column(scale=2):
-                    gr.Markdown(f'**{i18n("分句设置")}** _{i18n("参数会影响音频质量和生成速度")}_')
+                    gr.Markdown(f'**{i18n("分句設定")}** _{i18n("參數會影響音訊品質和生成速度")}_')
                     with gr.Row():
                         initial_value = max(20, min(tts.cfg.gpt.max_text_tokens, cmd_args.gui_seg_tokens))
                         max_text_tokens_per_segment = gr.Slider(
-                            label=i18n("分句最大Token数"), value=initial_value, minimum=20, maximum=tts.cfg.gpt.max_text_tokens, step=2, key="max_text_tokens_per_segment",
-                            info=i18n("建议80~200之间，值越大，分句越长；值越小，分句越碎；过小过大都可能导致音频质量不高"),
+                            label=i18n("分句最大Token數"), value=initial_value, minimum=20, maximum=tts.cfg.gpt.max_text_tokens, step=2, key="max_text_tokens_per_segment",
+                            info=i18n("建議80~200之間，值越大，分句越長；值越小，分句越碎；過小過大都可能導致音訊品質不高"),
                         )
-                    with gr.Accordion(i18n("预览分句结果"), open=True) as segments_settings:
+                    with gr.Accordion(i18n("預覽分句結果"), open=True) as segments_settings:
                         segments_preview = gr.Dataframe(
-                            headers=[i18n("序号"), i18n("分句内容"), i18n("Token数")],
+                            headers=[i18n("序號"), i18n("分句內容"), i18n("Token數")],
                             key="segments_preview",
                             wrap=True,
                         )
@@ -348,7 +348,7 @@ with gr.Blocks(title="IndexTTS Demo") as demo:
                 segments_preview: gr.update(value=data, visible=True, type="array"),
             }
         else:
-            df = pd.DataFrame([], columns=[i18n("序号"), i18n("分句内容"), i18n("Token数")])
+            df = pd.DataFrame([], columns=[i18n("序號"), i18n("分句內容"), i18n("Token數")])
             return {
                 segments_preview: gr.update(value=df),
             }
