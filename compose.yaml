@@ -1,0 +1,49 @@
+services:
+  indextts2:
+    build:
+      context: .
+      dockerfile: Dockerfile
+    image: indextts2:latest
+    container_name: indextts2
+    restart: unless-stopped
+    
+    # GPU support - requires nvidia-container-toolkit
+    deploy:
+      resources:
+        reservations:
+          devices:
+            - driver: nvidia
+              count: all
+              capabilities: [gpu]
+    
+    ports:
+      - "7860:7860"
+    
+    volumes:
+      # Mount checkpoints directory for model files
+      - ./checkpoints:/app/checkpoints
+      # Mount outputs directory for generated audio files
+      - ./outputs:/app/outputs
+      # Mount prompts directory for custom prompt audio
+      - ./prompts:/app/prompts
+    
+    environment:
+      # HuggingFace mirror (optional, uncomment if needed)
+      # - HF_ENDPOINT=https://hf-mirror.com
+      
+      # GPU settings
+      - CUDA_VISIBLE_DEVICES=0
+      
+      # Python environment
+      - PYTHONUNBUFFERED=1
+    
+    # Command arguments (can be overridden)
+    command: ["uv", "run", "webui.py", "--host", "0.0.0.0", "--port", "7860"]
+    
+    # Health check
+    healthcheck:
+      test: ["CMD", "curl", "-f", "http://localhost:7860/"]
+      interval: 30s
+      timeout: 10s
+      retries: 3
+      start_period: 60s

@@ -1,0 +1,64 @@
+# Git files
+.git
+.gitignore
+.gitattributes
+
+# Python cache and virtual environments
+__pycache__
+*.py[cod]
+*$py.class
+*.so
+.Python
+.venv
+venv/
+ENV/
+env/
+
+# uv cache
+.uv
+
+# IDE and editor files
+.vscode/
+.idea/
+*.swp
+*.swo
+*~
+.DS_Store
+
+# Documentation
+docs/
+archive/
+
+# Docker files
+Dockerfile
+compose.yaml
+.dockerignore
+
+# Large model files (will be mounted as volumes)
+checkpoints/*
+!checkpoints/.gitkeep
+
+# Output directories (will be mounted as volumes)
+outputs/*
+!outputs/.gitkeep
+prompts/*
+!prompts/.gitkeep
+
+# Test files
+tests/
+*.test.py
+pytest.ini
+.pytest_cache/
+
+# CI/CD
+.github/
+.gitlab-ci.yml
+
+# Logs
+*.log
+logs/
+
+# Temporary files
+*.tmp
+*.temp
+.cache/
